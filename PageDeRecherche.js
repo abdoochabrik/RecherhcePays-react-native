@@ -20,13 +20,26 @@ export default class PageDeRecherche extends Component {
         super(props);
         this.state = {
         requeteDeRecherche: 'morocco',
-        estEnChargement: false, 
+        estEnChargement: false,
+        message: '', 
        };
        }
        _executerRequete = (requete) => {
         console.log(requete);
         this.setState({ estEnChargement: true });
+        fetch(requete)
+             .then(reponse => reponse.json())
+             .then(json => this._gererLaReponse(json))
+             .catch(error =>
+             this.setState({
+             estEnChargement: false,
+            message: 'Quelque chose de mauvais s\'est produit' + error
+            }));
        };
+       _gererLaReponse = (reponse) => {
+        this.setState({ estEnChargement: false, message: '' });
+        console.log('Nombre de pays trouvés :' + reponse.length);
+        }; 
        _auDemarrageDeLaRecherche = () => {
         const requete = urlPourRequete(this.state.requeteDeRecherche);
         this._executerRequete(requete);
@@ -64,7 +77,8 @@ export default class PageDeRecherche extends Component {
  />
 </View> 
 <Image source={require('./Ressources/pays.png')} style={styles.image}/>
-{indicateurDeChargement}  
+{indicateurDeChargement}
+<Text style={styles.description}>{this.state.message}</Text>  
 </View>
  );
  }
