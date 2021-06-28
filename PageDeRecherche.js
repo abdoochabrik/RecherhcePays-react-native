@@ -19,7 +19,7 @@ export default class PageDeRecherche extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        requeteDeRecherche: 'morocco',
+        requeteDeRecherche: 'morocc',
         estEnChargement: false,
         message: '', 
        };
@@ -27,28 +27,34 @@ export default class PageDeRecherche extends Component {
        _executerRequete = (requete) => {
         console.log(requete);
         this.setState({ estEnChargement: true });
-        fetch(requete)
-             .then(reponse => reponse.json())
-             .then(json => this._gererLaReponse(json))
-             .catch(error =>
-             this.setState({
-             estEnChargement: false,
-            message: 'Quelque chose de mauvais s\'est produit' + error
-            }));
        };
+
        _gererLaReponse = (reponse) => {
         this.setState({ estEnChargement: false, message: '' });
-        console.log('Nombre de pays trouvés :' + reponse.length);
-        }; 
+        //console.log('Nombre de pays trouvés :' + reponse.length);
+        this.props.navigation.navigate('Resultats', {listings: reponse});
+        };  
+       
        _auDemarrageDeLaRecherche = () => {
         const requete = urlPourRequete(this.state.requeteDeRecherche);
         this._executerRequete(requete);
-       }; 
-      /* _auChangementDeLaRecherche = (event) => {
-        console.log('_auChangementDeLaRecherche');
+        fetch(requete)
+        .then(reponse => reponse.json())
+        .then(json => this._gererLaReponse(json))
+        .catch(error =>
+        this.setState({
+        estEnChargement: false,
+       message: 'Quelque chose de mauvais s\'est produit' + error
+       }));
+       };
+
+      _auChangementDeLaRecherche = (event) => {
+        this._auDemarrageDeLaRecherche();
         this.setState({ requeteDeRecherche: event.nativeEvent.text });
         console.log('Current: +this.state.requeteDeRecherche + ', 'Next: '+event.nativeEvent.text);
-       }*/
+       };
+
+    
            
  render() {
     
@@ -67,11 +73,12 @@ export default class PageDeRecherche extends Component {
  <TextInput
  underlineColorAndroid={'transparent'}
  style={styles.requeteEntree}
- //onChange={this._auChangementDeLaRecherche}
+ onChange={this._auChangementDeLaRecherche}
  value={this.state.requeteDeRecherche}
  placeholder='Rechercher par nom de pays'/>
  <Button
- onPress = {this._auDemarrageDeLaRecherche} 
+ //onPress = {this._auDemarrageDeLaRecherche}
+ //onPress={this.onubmit} 
  color='#48AAEC'
  title='Démarrer'
  />
